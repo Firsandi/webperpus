@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Member {
+  id          String      @id @default(cuid())
+  name        String
+  nim         String      @unique
+  photo       String?
+  address     String?
+  phone       String?
+  expiredAt   DateTime?
+  active      Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  loans       BookLoan[]
+}
+
+model Book {
+  id          String     @id @default(cuid())
+  bookCode    String?    @unique
+  title       String
+  category    String
+  totalCopies Int        @default(1)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  loans       BookLoan[]
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BookLoan {
+  id           String    @id @default(cuid())
+  memberId     String
+  bookId       String
+  borrowedAt   DateTime  @default(now())
+  dueDate      DateTime
+  returnedAt   DateTime?
+  status       String    @default("borrowed") // borrowed | returned | overdue
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  member       Member    @relation(fields: [memberId], references: [id])
+  book         Book      @relation(fields: [bookId], references: [id])
+}
