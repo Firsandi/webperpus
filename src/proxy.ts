@@ -4,9 +4,13 @@ import { verifyToken } from '@/lib/auth'
 export async function proxy(req: NextRequest) {
   const token = req.cookies.get('token')?.value
 
+  // Allow static files (images, fonts, icons, etc.)
+  if (req.nextUrl.pathname.match(/\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf)$/)) {
+    return NextResponse.next()
+  }
+
   const isLoginPage = req.nextUrl.pathname === '/login'
   const isApiAuth = req.nextUrl.pathname.startsWith('/api/auth')
-  const isPublicApi = req.nextUrl.pathname.startsWith('/api/auth/')
 
   // Allow auth API routes without authentication
   if (isApiAuth) return NextResponse.next()
@@ -37,5 +41,7 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|uploads).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|uploads|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+  ],
 }

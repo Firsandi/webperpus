@@ -25,12 +25,6 @@ export default function BooksPage() {
     setToast({ msg, type }); setTimeout(() => setToast(null), 3000)
   }
 
-  const fetchCategories = useCallback(async () => {
-    const res = await fetch('/api/categories')
-    const data = await res.json()
-    setCategories(Array.isArray(data) ? data : [])
-  }, [])
-
   const fetchBooks = useCallback(async () => {
     setLoading(true)
     const params = new URLSearchParams()
@@ -42,7 +36,18 @@ export default function BooksPage() {
     setLoading(false)
   }, [search, catFilter])
 
-  useEffect(() => { fetchCategories() }, [fetchCategories])
+  useEffect(() => {
+    let ignore = false
+    async function loadCategories() {
+      const res = await fetch('/api/categories')
+      const data = await res.json()
+      if (!ignore) {
+        setCategories(Array.isArray(data) ? data : [])
+      }
+    }
+    loadCategories()
+    return () => { ignore = true }
+  }, [])
 
   useEffect(() => {
     const t = setTimeout(fetchBooks, 300)

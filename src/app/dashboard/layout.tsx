@@ -1,7 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 const navItems = [
   { href: '/dashboard', icon: '📊', label: 'Dashboard' },
@@ -13,15 +12,6 @@ const navItems = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const router = useRouter()
-  const [loggingOut, setLoggingOut] = useState(false)
-
-  async function handleLogout() {
-    setLoggingOut(true)
-    await fetch('/api/auth/logout', { method: 'POST' })
-    router.push('/login')
-    router.refresh()
-  }
 
   return (
     <div className="layout">

@@ -48,7 +48,9 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: 'Tidak terautentikasi' }, { status: 401 })
 
   try {
-    let { memberId, bookId, dueDate } = await req.json()
+    const body = (await req.json()) as { memberId?: string; bookId?: string; dueDate?: string }
+    const { memberId, bookId } = body
+    let { dueDate } = body
 
     if (!memberId || !bookId) {
       return NextResponse.json({ error: 'Anggota dan Buku wajib dipilih' }, { status: 400 })

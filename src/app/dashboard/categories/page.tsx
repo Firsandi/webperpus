@@ -39,7 +39,27 @@ export default function CategoriesPage() {
     setLoading(false)
   }, [])
 
-  useEffect(() => { fetchCategories() }, [fetchCategories])
+  useEffect(() => {
+    let ignore = false
+    async function load() {
+      const [catRes, bookRes] = await Promise.all([
+        fetch('/api/categories'),
+        fetch('/api/books'),
+      ])
+      const cats: Category[] = await catRes.json()
+      const books: { category: string }[] = await bookRes.json()
+
+      if (!ignore) {
+        const counts: Record<string, number> = {}
+        books.forEach(b => { counts[b.category] = (counts[b.category] || 0) + 1 })
+        setBookCounts(counts)
+        setCategories(Array.isArray(cats) ? cats : [])
+        setLoading(false)
+      }
+    }
+    load()
+    return () => { ignore = true }
+  }, [])
 
   function openAdd() {
     setEditCat(null); setName(''); setShowModal(true)

@@ -9,7 +9,7 @@ async function main() {
   // Reset users and create single admin user
   await prisma.user.deleteMany({})
 
-  const hashedPassword = await bcrypt.hash('bidang1himafi', 10)
+  const hashedPassword = await bcrypt.hash('admin1himafi', 10)
   const admin = await prisma.user.create({
     data: {
       username: 'admin',
@@ -167,7 +167,7 @@ async function main() {
   console.log('✅ Sample loans created:', loans.length)
 
   console.log('🎉 Seeding complete!')
-  console.log('📋 Login credentials: admin / admin123')
+  console.log('📋 Login credentials: admin / admin1himafi')
 }
 
 main()
